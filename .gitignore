@@ -1,0 +1,16 @@
+*.out
+*.app
+/LitePeach
+/build/
+*.o
+*.obj
+.vscode/
+.idea/
+*.swp
+*.swo
+*.log
+*.dump
+
+# Added by cargo
+
+/target
