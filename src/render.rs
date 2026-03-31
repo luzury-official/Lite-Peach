@@ -13,17 +13,13 @@ impl Renderer {
     }
 
     pub fn draw_world(&self, world: &World, cam: &MyCamera) {
-        clear_background(BLACK);
-
         set_camera(&macroquad::prelude::Camera3D {
-            position: cam.position,
+            position: cam.transform.position,
             target: cam.target,
             up: cam.up,
-            fovy: cam.fovy as f32,
+            fovy: cam.fovy,
             ..Default::default()
         });
-
-        draw_grid(20, 1.0, WHITE, GRAY);
 
         for mesh in &world.objects {
             self.draw_mesh(mesh);
@@ -36,11 +32,14 @@ impl Renderer {
     fn draw_mesh(&self, mesh: &MyMesh) {
         let vertices: Vec<MQVertex> = mesh.vertices
             .iter()
-            .map(|v| MQVertex {
-                position: v.position + mesh.position, 
-                uv: v.uv,
-                color: v.color.into(),
-                normal: vec4(0.0, 1.0, 0.0, 0.0),
+            .map(|v| {
+                let rotated_pos = mesh.transform.rotation.rotate_vector(v.position);
+                MQVertex {
+                    position: rotated_pos + mesh.transform.position,
+                    uv: v.uv,
+                    color: v.color.into(),
+                    normal: vec4(0.0, 1.0, 0.0, 0.0),
+                }
             })
             .collect();
 
